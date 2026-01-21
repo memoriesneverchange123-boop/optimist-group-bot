@@ -56,15 +56,7 @@ async def main():
         return
 
     client = TelegramClient(StringSession(SESSION_STRING), API_ID, API_HASH)
-    await client.connect()
-
-    if not await client.is_user_authorized():
-        logger.error("Session invalid!")
-        return
-
-    me = await client.get_me()
-    logger.info("Logged in as: " + me.first_name + " (@" + me.username + ")")
-
+    
     @client.on(events.NewMessage(pattern=r'/creates+(.+)', outgoing=True))
     async def handle_create(event):
         logger.info("Received /create command!")
@@ -83,9 +75,16 @@ async def main():
             await event.reply("Error: " + str(e))
             logger.error("Failed to create group: " + str(e))
 
+    await client.start()
+    me = await client.get_me()
+    logger.info("Logged in as: " + me.first_name + " (@" + me.username + ")")
     logger.info("Bot is now listening for /create commands...")
+    
+    # Keep the bot running forever
     await client.run_until_disconnected()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(main())
