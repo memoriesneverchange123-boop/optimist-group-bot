@@ -6,7 +6,7 @@ Optimist Group Creator Bot - Railway Edition
 import logging
 import os
 import sys
-from telethon.sync import TelegramClient, events
+from telethon import TelegramClient, events
 from telethon.tl.functions.channels import CreateChannelRequest
 from telethon.tl.functions.messages import ExportChatInviteRequest
 from telethon.sessions import StringSession
