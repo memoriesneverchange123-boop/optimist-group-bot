@@ -42,9 +42,10 @@ async def send_invite_to_friends(client, invite_link, group_name):
         username = username.strip()
         if username:
             try:
-                await client.send_message(username, f"You've been invited to join '{group_name} <> Optimists'!
+                msg = f"You've been invited to join '{group_name} <> Optimists'!" + "
 
-Join here: {invite_link}")
+" + f"Join here: {invite_link}"
+                await client.send_message(username, msg)
                 logger.info(f"Sent invite to @{username}")
             except Exception as e:
                 logger.error(f"Failed to send invite to @{username}: {e}")
@@ -66,7 +67,7 @@ async def main():
     me = await client.get_me()
     logger.info(f"Logged in as: {me.first_name} (@{me.username})")
 
-    @client.on(events.NewMessage(pattern=r'/creates+(.+)'))
+    @client.on(events.NewMessage(pattern=r'/create\s+(.+)'))
     async def handle_create(event):
         sender = await event.get_sender()
         if sender.username and sender.username.lower() == YOUR_USERNAME.lower():
