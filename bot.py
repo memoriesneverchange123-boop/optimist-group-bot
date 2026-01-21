@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Optimist Group Creator Bot - Railway Edition
-Runs 24/7 on Railway.app
+Runs 24/7 on Railway.app - v2
 """
 
 import asyncio
