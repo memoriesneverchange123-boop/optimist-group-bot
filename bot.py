@@ -53,8 +53,8 @@ async def send_invite_to_friends(invite_link, group_name):
                                                         msg = "You've been invited to join '" + group_name + " <> Optimists'! Join here: " + invite_link
                                                         await client.send_message(username, msg)
                                                         logger.info("Sent invite to @" + username)
-except Exception as e:
-                logger.error("Failed to send invite to @" + username + ": " + str(e))
+                        except Exception as e:
+                                logger.error("Failed to send invite to @" + username + ": " + str(e))
 
 
 async def main():
