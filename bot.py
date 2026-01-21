@@ -67,7 +67,7 @@ async def main():
 
     client = TelegramClient(StringSession(SESSION_STRING), API_ID, API_HASH)
 
-    @client.on(events.NewMessage(pattern=r'/creates+(.+)', outgoing=True))
+    @client.on(events.NewMessage(pattern=r'/create\\s+.+)', outgoing=True))
     async def handle_create(event):
         logger.info("Received /create command!")
         group_name = event.pattern_match.group(1).strip()
