@@ -24,64 +24,64 @@ logger = logging.getLogger(__name__)
 
 
 async def create_group_and_get_invite(client, group_name):
-      full_name = f"{group_name} <> Optimists"
-      result = await client(CreateChannelRequest(
-          title=full_name,
-          about="Group created via Optimist Group Creator Bot",
-          megagroup=True
-      ))
-      channel = result.chats[0]
-      logger.info(f"Created group: {full_name}")
-      invite_result = await client(ExportChatInviteRequest(peer=channel, legacy_revoke_permanent=True))
-      return invite_result.link, channel.id
+    full_name = f"{group_name} <> Optimists"
+    result = await client(CreateChannelRequest(
+        title=full_name,
+        about="Group created via Optimist Group Creator Bot",
+        megagroup=True
+    ))
+    channel = result.chats[0]
+    logger.info(f"Created group: {full_name}")
+    invite_result = await client(ExportChatInviteRequest(peer=channel, legacy_revoke_permanent=True))
+    return invite_result.link, channel.id
 
 
 async def send_invite_to_friends(client, invite_link, group_name):
-      message = f"You've been invited to join: {group_name} <> Optimists\nJoin here: {invite_link}"
-      for username in FRIEND_USERNAMES:
-                username = username.strip()
-                if not username:
-                              continue
-                          try:
-                                        user = await client.get_entity(username)
-                                        await client.send_message(user, message)
-                                        logger.info(f"Sent invite to @{username}")
-except Exception as e:
-            logger.error(f"Failed to send to @{username}: {e}")
+    """Send invite link to all friends in the FRIEND_USERNAMES list"""
+    for username in FRIEND_USERNAMES:
+        username = username.strip()
+        if username:
+            try:
+                await client.send_message(username, f"You've been invited to join '{group_name} <> Optimists'!
+
+Join here: {invite_link}")
+                logger.info(f"Sent invite to @{username}")
+            except Exception as e:
+                logger.error(f"Failed to send invite to @{username}: {e}")
 
 
 async def main():
-      logger.info("Starting Optimist Group Creator Bot...")
-      if not SESSION_STRING:
-                logger.error("SESSION_STRING not set!")
-                return
+    logger.info("Starting Optimist Group Creator Bot...")
+    if not SESSION_STRING:
+        logger.error("SESSION_STRING not set!")
+        return
 
-      client = TelegramClient(StringSession(SESSION_STRING), API_ID, API_HASH)
-      await client.connect()
+    client = TelegramClient(StringSession(SESSION_STRING), API_ID, API_HASH)
+    await client.connect()
 
     if not await client.is_user_authorized():
-              logger.error("Session invalid!")
-              return
+        logger.error("Session invalid!")
+        return
 
     me = await client.get_me()
     logger.info(f"Logged in as: {me.first_name} (@{me.username})")
 
-    @client.on(events.NewMessage(pattern=r'/create\s+(.+)'))
+    @client.on(events.NewMessage(pattern=r'/creates+(.+)'))
     async def handle_create(event):
-              sender = await event.get_sender()
-              if sender.username and sender.username.lower() == YOUR_USERNAME.lower():
-                            group_name = event.pattern_match.group(1).strip()
-                            if not group_name:
-                                              await event.reply("Usage: /create GroupName")
-                                              return
-                                          await event.reply(f"Creating group: {group_name} <> Optimists...")
-                            try:
-                                              invite_link, _ = await create_group_and_get_invite(client, group_name)
-                                              await event.reply("Sending invites...")
-                                              await send_invite_to_friends(client, invite_link, group_name)
-                                              await event.reply(f"Done! Invite link: {invite_link}")
-                                              logger.info(f"Created '{group_name}'")
-except Exception as e:
+        sender = await event.get_sender()
+        if sender.username and sender.username.lower() == YOUR_USERNAME.lower():
+            group_name = event.pattern_match.group(1).strip()
+            if not group_name:
+                await event.reply("Usage: /create GroupName")
+                return
+            await event.reply(f"Creating group: {group_name} <> Optimists...")
+            try:
+                invite_link, _ = await create_group_and_get_invite(client, group_name)
+                await event.reply("Sending invites...")
+                await send_invite_to_friends(client, invite_link, group_name)
+                await event.reply(f"Done! Invite link: {invite_link}")
+                logger.info(f"Created '{group_name}'")
+            except Exception as e:
                 await event.reply(f"Error: {str(e)}")
                 logger.error(f"Failed: {e}")
 
@@ -89,4 +89,4 @@ except Exception as e:
 
 
 if __name__ == "__main__":
-      asyncio.run(main())
+    asyncio.run(main())
