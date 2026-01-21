@@ -1,1 +1,3 @@
+# Bot requirements - updated for cache bust
 telethon==1.36.0
+aiohttp>=3.8.0
